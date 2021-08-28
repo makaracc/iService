@@ -9,6 +9,8 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(express.static("public"));
 app.use(express.static(__dirname + '/public'));
+const mailChimpAPI = "2c1ca320d1a0a62a37a31a9aacad457d-us5";
+const audience_id = "68cb2e365e";
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
