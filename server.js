@@ -48,6 +48,11 @@ app.post("/", (req, res) => {
   }
 
 });
-app.listen(1337, (req, res)=>{
+
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8080;
+}
+app.listen(port, (req, res)=>{
     console.log("server is running on port 1337")
 })
