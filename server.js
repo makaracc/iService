@@ -54,5 +54,5 @@ if (port == null || port == "") {
   port = 8080;
 }
 app.listen(port, (req, res)=>{
-    console.log("server is running on port 1337")
+    console.log("server is running on port" + port)
 })
