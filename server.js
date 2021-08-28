@@ -7,7 +7,8 @@ const IServiceDB = require("./models/IServiceUser")
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
+// app.use(express.static("public"));
+app.use(express.static(__dirname + '/public'));
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
@@ -21,6 +22,7 @@ app.post("/", (req, res) => {
   const lastName = req.body.last_name;
   const country = req.body.country;
   const email_adr = req.body.email;
+  if(!validator.isEmail(email_adr)) {console.log("Email is not valid")}
   const address = req.body.address;
   const city = req.body.city;
   const state = req.body.state;
@@ -45,14 +47,16 @@ app.post("/", (req, res) => {
     }else{
       res.sendFile(__dirname+ "/404.html")
     }
+  }else{
+    console.log("Comfirm password confirm does not match!")
   }
 
 });
 
 let port = process.env.PORT;
 if (port == null || port == "") {
-  port = 8080;
+  port = 1337;
 }
 app.listen(port, (req, res)=>{
-    console.log("server is running on port" + port)
+    console.log("server is running on port " + port)
 })

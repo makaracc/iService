@@ -1,5 +1,16 @@
 /* width of selct country */
 select{
-    width:50%;
+    width:26.5%;
     text-align-last:center;
+}
+.btn-abit-blue{
+    background-color: rgb(127, 246, 255);
+    margin-left: 100px;
+}
+h2{
+    color: rgb(127, 246, 255);
+    font-weight: bold;
+}
+h4{
+    color: rgb(127, 246, 255);
 }
