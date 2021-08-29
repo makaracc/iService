@@ -3,7 +3,8 @@ const validator = require("validator");
 const bodyParser = require("body-parser");
 const https = require("https");
 const mongoose = require("mongoose")
-const IServiceDB = require("./models/IServiceUser")
+const IServiceDB = require("./models/IServiceUser");
+const { json } = require("body-parser");
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -11,6 +12,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 const mailChimpAPI = "2c1ca320d1a0a62a37a31a9aacad457d-us5";
 const audience_id = "68cb2e365e";
+const url = "https://us5.api.mailchimp.com/3.0/lists/68cb2e365e";
+
+const options = {
+  method: "POST",
+  auth: "azi:2c1ca320d1a0a62a37a31a9aacad457d" ,
+
+}
+
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
@@ -45,7 +54,28 @@ app.post("/", (req, res) => {
     iServiceDB.save()
     .catch((err) => console.log(err));
     if(res.statusCode === 200){
-      res.sendFile(__dirname + "/success.html")
+      const data = {
+        members: [{
+          email_address: email_adr,
+          status: "subscribed",
+          merge_fields: {
+            FNAME: firstName,
+            LNAME: lastName
+          }
+        }],
+      }
+      jsonData = JSON.stringify(data);
+
+      const request = https.request(url, options, (res) =>{
+        res.on("data", (data) =>{
+          console.log(JSON.parse(data));
+        })
+      });
+
+      request.write(jsonData);
+      request.end();
+
+      res.sendFile(__dirname + "/success.html");
     }else{
       res.sendFile(__dirname+ "/404.html")
     }
