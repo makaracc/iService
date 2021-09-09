@@ -1,0 +1,20 @@
+/* width of selct country */
+body{
+    margin: 50px;
+}
+
+select{
+    width:26.5%;
+    text-align-last:center;
+}
+.btn-abit-blue{
+    background-color: rgb(102, 146, 240);
+    margin-left: 100px;
+}
+h2{
+    color: rgb(99, 129, 194);
+    font-weight: bold;
+}
+h4{
+    color: rgb(99, 145, 243);
+}
