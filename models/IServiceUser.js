@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-// const passportLocalMongoose = require("passport-local-mongoose")
+const passportLocalMongoose = require("passport-local-mongoose")
 const iserviceUserSchema = new mongoose.Schema({
   first_name: String,
   last_name: String,
@@ -22,6 +22,6 @@ const iserviceUserSchema = new mongoose.Schema({
   phone: Number
 });
 
-// iserviceUserSchema.plugin(passportLocalMongoose)
+iserviceUserSchema.plugin(passportLocalMongoose)
 
 module.exports = mongoose.model("iservicedb", iserviceUserSchema);

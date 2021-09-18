@@ -6,6 +6,7 @@ const mongoose = require("mongoose")
 const IServiceModel = require("./models/IServiceUser");
 const { json } = require("body-parser");
 const passport = require("passport");
+const expreSession = require('express-session')
 const cookieSession = require("cookie-session")
 const googlePassport = require("./google-passport")
 const bcrypt = require("bcrypt")
@@ -13,22 +14,28 @@ const bcrypt = require("bcrypt")
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
+app.use(expreSession({
+  cookie: {maxAge: 12000000000000000},
+  resave: false,
+  saveUninitialized: false,
+  secret: 'asdfjksadlkjfaslkdf&&j*la987ksdjf@'
+}))
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Salt
 const saltRounds = 10;
+// Connect to monngodb atlas via mongoose
+mongoose.connect("mongodb+srv://makara:220101@cluster0.ynskd.mongodb.net/IServiceDB?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true})
 
-app.use(cookieSession({
-  name: 'session',
-  keys: ['key1', 'key2']
-}))
+passport.use(IServiceModel.createStrategy())
+passport.serializeUser(IServiceModel.serializeUser());
+passport.deserializeUser(IServiceModel.deserializeUser());
 
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/login.html");
 });
-
-mongoose.connect("mongodb+srv://makara:220101@cluster0.ynskd.mongodb.net/IServiceDB?retryWrites=true&w=majority", {useNewUrlParser: true})
 
 
 app.get('/failed', (req, res) =>{
@@ -49,7 +56,19 @@ app.get("/signup", (req, res) =>{
   res.sendFile(__dirname + "/signup.html")
 })
 
+const isLoggedIn = (req, res, next) =>{
+  req.user? next() : res.sendStatus(401);
+}
 
+app.get('/home', isLoggedIn, (req, res) =>{
+  res.sendFile(__dirname+"/index.html")
+})
+
+app.get('/logout', (req, res)=>{
+  req.session = null;
+  req.logout();
+  res.redirect('/');
+})
 
 // login post request
 app.post("/", async (req, res) => {
@@ -59,13 +78,12 @@ app.post("/", async (req, res) => {
     }else{
       const data = result;
       if(data.length > 0){
-        console.log(data)
         try{
           data.forEach(element =>{
             bcrypt.compare(pass, element.hash).then((compare_result) =>{
               if(compare_result){
                console.log("login succeed!");
-               res.sendFile(__dirname+'/index.html')
+               res.redirect('/home')
               }else{
                console.log("Incorrect Email password");
               }
@@ -155,6 +173,96 @@ app.post("/signup", async (req, res) => {
     console.log("Comfirm password confirm does not match!");
   }
 });
+
+
+
+// Expert API
+app.route("/experts")
+// POST request
+.post((req, res) => {
+  const expert = new Expert({
+    name: req.body.name,
+    phone: req.body.phone,
+    password: req.body.password,
+    address: req.body.address
+    
+  })
+  expert.save(err => {
+    if(err) {res.send(err)}
+    else{
+      res.send("Successfully added a new expert!")
+    }
+  })
+})
+// GET All Experts
+.get((req,res)=>{
+  Expert.find((err, experts) =>{
+    if (err) {res.send(err)}
+    else{res.send(experts)}
+  })
+})
+// Delete
+.delete( (req,res)=>{
+  Expert.deleteMany(err =>{
+    if(err) {res.send.apply(err)}
+    else{
+      res.send("Successfully deleted all experts")
+    }
+  })
+})
+
+app.route("/experts/:_id")
+.get((req, res)=>{
+  // console.log(req.params._id)
+
+  Expert.findOne({_id: req.params._id}, (err, foundExpert) =>{
+    if(!err) {res.send(foundExpert)}
+    else{
+      res.send("No match expert found!")
+    }
+  })
+})
+.put((req, res)=>{
+
+   Expert.updateMany(
+    {_id: req.params._id},
+    {name: req.body.name,
+      phone: req.body.phone,
+      address: req.body.address,
+      password: req.body.password
+    },
+
+    (err, doc) =>{
+      if(err) {res.send(err)}
+      else{res.send("Successfully updated expert!\n")}
+    }
+  )
+})
+.patch((req, res)=>{
+    Expert.updateMany(
+    {_id: req.params._id},
+    {$set: {
+      address: req.body.address,
+      password: req.body.password,
+      phone: req.body.phone
+    }
+  },
+
+    (err) =>{
+      if(err) {res.send(err)}
+      else{res.send("Successfully updated expert!\n")}
+    }
+  )  
+})
+.delete((req,res) =>{
+    Expert.deleteOne(
+      {_id: req.params._id},
+      (err) =>{
+        if(err){res.send(err)}
+        else{res.send("Delete successfully!")}
+      }
+    )
+})
 
 let port = process.env.PORT;
 if (port == null || port == "") {

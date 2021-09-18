@@ -7,7 +7,7 @@ const GOOGLE_CLIENT_SECRET = "fPEeSovWJq2RoNqH7zQ9hTfc";
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://localhost:1337/auth/google/callback"
+    callbackURL: "http://localhost:1337/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOrCreate({ googleId: profile.id }, function (err, user) {
