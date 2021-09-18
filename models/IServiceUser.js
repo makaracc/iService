@@ -14,7 +14,17 @@ const iserviceUserSchema = new mongoose.Schema({
       }
     }
   },
-  hash: String,
+  username: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is not valid!");
+      }
+    }
+  },
+  // hash: String,
   country: String,
   city: String,
   state: String,
