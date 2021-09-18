@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const clientSchema = new mongoose.Schema({
+// const passportLocalMongoose = require("passport-local-mongoose")
+const iserviceUserSchema = new mongoose.Schema({
   first_name: String,
   last_name: String,
   email: {
@@ -13,10 +14,14 @@ const clientSchema = new mongoose.Schema({
       }
     }
   },
+  hash: String,
   country: String,
   city: String,
   state: String,
   zip: Number,
   phone: Number
 });
-module.exports = mongoose.model("iservicedb", clientSchema);
+
+// iserviceUserSchema.plugin(passportLocalMongoose)
+
+module.exports = mongoose.model("iservicedb", iserviceUserSchema);
