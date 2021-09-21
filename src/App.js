@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import NavBar from "./NavBar";
+import harold from './Images/harold.jpeg'
+import './App.css'
+import ExpertCardList from "./ExpertCardList";
+import Footer from "./Footer";
 
-function App() {
-  return (
+function App(){
+    return(
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <NavBar/>
+        <img src={harold} alt="Avatar" width='800px'></img>
+        <ExpertCardList/>
+        <Footer />
     </div>
-  );
+    )
 }
 
 export default App;
