@@ -6,7 +6,7 @@ import './Connect.css'
 
 const Connect = ()=>{
     return(
-        <div className='OneLine'>
+        <div className='Connect OneLine'>
             <h2 className="OneLine">CONNECT US</h2>
             <img src={facebookLogo} alt='facebooklogo' className='Logo'/>
             <img src={twitterLogo} alt='twitterlogo' className='Logo'/>

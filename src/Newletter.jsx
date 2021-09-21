@@ -3,7 +3,7 @@ import './NewLetter.css'
 
 const Newletter = () => {
   return (
-    <div className="OneLine">
+    <div className="Newletter OneLine">
       <h2 className="OneLine" >NEWLETTER SIGN</h2>
       <form className="OneLine">
         <label className="OneLine" >
