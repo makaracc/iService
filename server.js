@@ -10,18 +10,20 @@ const expreSession = require("express-session");
 const cookieSession = require("cookie-session");
 const googlePassport = require("./google-passport");
 const bcrypt = require("bcrypt");
-const LocalStrategy = require('passport-local')
-const STRIPE_PUBLIC_KEY = 'pk_test_51Jc6cbHXKOWLYjLRzBavS4GeihsDxkPgcAMoIpyNu0AH1SqLCMDYhgLk0VWCFb8TSxOqwdnUFlo09ea4VmPrZXOY00bLJWCAyT';
-const STRIPE_SECRET_KEY = 'sk_test_51Jc6cbHXKOWLYjLRftQUnWaxy0AKbiLaNTFZ3hjXjeyxpXpw1zWLuhaZUl9cxzm80EQpnAL5CYrVPzo9dEJWeipn00389UVHQ2';
-const stripe = require('stripe')(STRIPE_SECRET_KEY);
+const LocalStrategy = require("passport-local");
+const STRIPE_PUBLIC_KEY =
+  "pk_test_51Jc6cbHXKOWLYjLRzBavS4GeihsDxkPgcAMoIpyNu0AH1SqLCMDYhgLk0VWCFb8TSxOqwdnUFlo09ea4VmPrZXOY00bLJWCAyT";
+const STRIPE_SECRET_KEY =
+  "sk_test_51Jc6cbHXKOWLYjLRftQUnWaxy0AKbiLaNTFZ3hjXjeyxpXpw1zWLuhaZUl9cxzm80EQpnAL5CYrVPzo9dEJWeipn00389UVHQ2";
+const stripe = require("stripe")(STRIPE_SECRET_KEY);
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
-app.set('trust proxy', 1)
+app.set("trust proxy", 1);
 app.use(
   expreSession({
-    cookie: { 
+    cookie: {
       maxAge: 120000000,
     },
     resave: false,
@@ -58,11 +60,10 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    successRedirect: '/home',
-    failureRedirect: "/failed" }),
-  function (req, res) {
-    
-  }
+    successRedirect: "/home",
+    failureRedirect: "/failed",
+  }),
+  function (req, res) {}
 );
 
 app.get("/signup", (req, res) => {
@@ -85,38 +86,41 @@ app.get("/logout", (req, res) => {
 });
 
 // login post request
-app.post("/", passport.authenticate('local', {
-    successRedirect: '/home',
-    failureRedirect: '/'
-  }), async (req, res) => {
-  // const pass = req.body.login_password;
-  
-  })
-  // IServiceModel.find({ email: req.body.login_email }, function (err, result) {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     const data = result;
-  //     if (data.length > 0) {
-  //       try {
-  //         data.forEach((element) => {
-  //           bcrypt.compare(pass, element.hash).then((compare_result) => {
-  //             if (compare_result) {
-  //               console.log("login succeed!");
-  //               res.redirect("/home");
-  //             } else {
-  //               console.log("Incorrect Email password");
-  //             }
-  //           });
-  //         });
-  //       } catch (err) {
-  //         console.log(err);
-  //       }
-  //     } else {
-  //       console.log("Email has not registered!");
-  //     }
-    // }
-  // });
+app.post(
+  "/",
+  passport.authenticate("local", {
+    successRedirect: "/home",
+    failureRedirect: "/",
+  }),
+  async (req, res) => {
+    // const pass = req.body.login_password;
+  }
+);
+// IServiceModel.find({ email: req.body.login_email }, function (err, result) {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     const data = result;
+//     if (data.length > 0) {
+//       try {
+//         data.forEach((element) => {
+//           bcrypt.compare(pass, element.hash).then((compare_result) => {
+//             if (compare_result) {
+//               console.log("login succeed!");
+//               res.redirect("/home");
+//             } else {
+//               console.log("Incorrect Email password");
+//             }
+//           });
+//         });
+//       } catch (err) {
+//         console.log(err);
+//       }
+//     } else {
+//       console.log("Email has not registered!");
+//     }
+// }
+// });
 // });
 
 app.post("/signup", async (req, res) => {
@@ -134,7 +138,6 @@ app.post("/signup", async (req, res) => {
   const state = req.body.state;
   const zip = req.body.zip;
   const phone = req.body.phone;
-
 
   if (validator.equals(hashpass, hashconfirmpass)) {
     IServiceModel.register(
@@ -297,65 +300,30 @@ app
     });
   });
 
-  // app.get('/payment', (req, res)=>{
-  //   res.sendFile(__dirname+'/payment.html')
-  // })
-  
-  const charge = (token, amt)=> {
-    return stripe.charges.create({
-      amount: amt * 100,
-      currency: 'usd',
-      source: token,
-      description: 'Statement Description'
-    })
-  }
-// View Engine Setup 
-app.set('views', __dirname+ '/views') 
-app.set('view engine', 'ejs') 
-
-
-
-app.get('/paymen', function(req, res){ 
-  res.render('Home', { 
-  key: STRIPE_PUBLIC_KEY
-  }) 
-}) 
-
-  // app.get('/paymen', async (req, res) =>{
-  //   res.sendFile(__dirname+"/payment.html")
-  //   // try{
-  //   //   let data = await charge(stripe.createToken({name:"john"}), 50);
-  //   //   console.log(data);
-  //   //   res.sendFile(__dirname+'/accepted.html')
-  //   // }catch(e){
-  //   //   res.send('error' + e);
-  //   // }
-  // });
-
-
-  app.post('/payment', (req, res) =>{
-    stripe.customers.create({
+app.post("/payment", (req, res) => {
+  stripe.customers
+    .create({
       email: req.body.stripeEmail,
-      source: req.body.stripeToken
+      source: req.body.stripeToken,
     })
-      .then(customer => {
-        console.log(customer.id)
-        return stripe.charges.create({
-          amount: 3000,
-          description: 'Cleaning Service',
-          currency: 'USD',
-          customer: customer.id
-        })
-      })
-      .then((charge)=>{
-        res.send('Payment Succeed!\n' + charge)
-      })
-      .catch(error => {
-        res.send('Payment Failed!\n' + error)
-        console.error(error);
+    .then((customer) => {
+      console.log(customer.id);
+      return stripe.charges.create({
+        amount: 5000,
+        description: "Cleaning Service",
+        currency: "USD",
+        customer: customer.id,
       });
-  });
-
+    })
+    .then((charge) => {
+      console.log(charge)
+      res.send("Payment Succeed!\n");
+    })
+    .catch((error) => {
+      res.send("Payment Failed!\n");
+      console.error(error);
+    });
+});
 
 
 

@@ -4,11 +4,31 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
     <title>Home</title>
 </head>
 <body>
     <h1>Login succeed!</h1>
+    <hr>
+   <div style="text-align: center;">
+    <h3>Pay for service at IService</h3> 
+    <h3>Payment method: Stipe</h3> 
+    <h4>Cost: $50</h4>
+    <form action="/payment" method="POST"> 
+    <script
+        src="//checkout.stripe.com/v3/checkout.js"
+        class="stripe-button btn-block"
+        data-key="pk_test_51Jc6cbHXKOWLYjLRzBavS4GeihsDxkPgcAMoIpyNu0AH1SqLCMDYhgLk0VWCFb8TSxOqwdnUFlo09ea4VmPrZXOY00bLJWCAyT" 
+        data-amount="5000" 
+        data-currency="aud" 
+        data-name="IService" 
+        data-description="Cleaning" 
+        data-locale="auto" >
+        </script> 
+   </div>
+    <hr>
     <form action="/logout" method="GET">
-    <button type="submit">Logout</button></form>
+    <button class="btn-danger" type="submit">Logout</button></form>
 </body>
 </html>
