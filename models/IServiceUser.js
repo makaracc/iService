@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const passportLocalMongoose = require("passport-local-mongoose")
+const findOrCreate = require("mongoose-findorcreate");
 const iserviceUserSchema = new mongoose.Schema({
+  googleId: String,
   first_name: String,
   last_name: String,
   email: {
@@ -24,7 +26,6 @@ const iserviceUserSchema = new mongoose.Schema({
       }
     }
   },
-  // hash: String,
   country: String,
   city: String,
   state: String,
@@ -33,5 +34,6 @@ const iserviceUserSchema = new mongoose.Schema({
 });
 
 iserviceUserSchema.plugin(passportLocalMongoose)
+iserviceUserSchema.plugin(findOrCreate);
 
 module.exports = mongoose.model("iservicedb", iserviceUserSchema);

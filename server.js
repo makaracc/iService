@@ -11,6 +11,9 @@ const cookieSession = require("cookie-session");
 const googlePassport = require("./google-passport");
 const bcrypt = require("bcrypt");
 const LocalStrategy = require('passport-local')
+const STRIPE_PUBLIC_KEY = 'pk_test_51Jc6cbHXKOWLYjLRzBavS4GeihsDxkPgcAMoIpyNu0AH1SqLCMDYhgLk0VWCFb8TSxOqwdnUFlo09ea4VmPrZXOY00bLJWCAyT';
+const STRIPE_SECRET_KEY = 'sk_test_51Jc6cbHXKOWLYjLRftQUnWaxy0AKbiLaNTFZ3hjXjeyxpXpw1zWLuhaZUl9cxzm80EQpnAL5CYrVPzo9dEJWeipn00389UVHQ2';
+const stripe = require('stripe')(STRIPE_SECRET_KEY);
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,9 +21,9 @@ app.use(express.static(__dirname + "/public"));
 app.set('trust proxy', 1)
 app.use(
   expreSession({
-    cookie: { maxAge: 120000000,
-      secure: true
-     },
+    cookie: { 
+      maxAge: 120000000,
+    },
     resave: false,
     saveUninitialized: false,
     secret: "asdfjksadlkjfaslkdf&&j*la987ksdjf@",
@@ -30,9 +33,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Salt
-const saltRounds = 10;
-// Connect to monngodb atlas via mongoose
 mongoose.connect(
   "mongodb+srv://makara:220101@cluster0.ynskd.mongodb.net/IServiceDB?retryWrites=true&w=majority",
   { useNewUrlParser: true, useUnifiedTopology: true }
@@ -61,8 +61,7 @@ app.get(
     successRedirect: '/home',
     failureRedirect: "/failed" }),
   function (req, res) {
-    // Successful authentication, redirect home.
-    // res.sendFile(__dirname + "/index.html");
+    
   }
 );
 
@@ -71,7 +70,6 @@ app.get("/signup", (req, res) => {
 });
 
 const isLoggedIn = (req, res, next) => {
-  console.log('here?')
   req.user ? next() : res.sendStatus(401);
 };
 
@@ -80,7 +78,8 @@ app.get("/home", isLoggedIn, (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-  req.session = null;
+  req.user = null;
+  req.session.destroy();
   req.logout();
   res.redirect("/");
 });
@@ -88,11 +87,8 @@ app.get("/logout", (req, res) => {
 // login post request
 app.post("/", passport.authenticate('local', {
     successRedirect: '/home',
-    
-    failureRedirect: '/',
-    failureFlash: true 
+    failureRedirect: '/'
   }), async (req, res) => {
-    console.log('here?ad')
   // const pass = req.body.login_password;
   
   })
@@ -139,26 +135,8 @@ app.post("/signup", async (req, res) => {
   const zip = req.body.zip;
   const phone = req.body.phone;
 
-  // const salt = await bcrypt.genSaltSync(saltRounds);
-  // const hashpass = await bcrypt.hashSync(pass, salt);
-  // const hashconfirmpass = await bcrypt.hashSync(confirmpass, salt);
-
-  // console.log("hash:" + hashpass);
-  // console.log("confirm hash:" + hashconfirmpass);
 
   if (validator.equals(hashpass, hashconfirmpass)) {
-    // const iServiceDB = new IServiceModel({
-    //   email: email_adr,
-    //   first_name: firstName,
-    //   last_name: lastName,
-    //   hash: hashpass,
-    //   country: country,
-    //   address: address,
-    //   city: city,
-    //   state: state,
-    //   zip: zip,
-    //   phone: phone,
-    // });
     IServiceModel.register(
       {
         email: email_adr,
@@ -183,8 +161,6 @@ app.post("/signup", async (req, res) => {
         }
       }
     );
-    // iServiceDB.save().catch((err) => console.log(err));
-    // mongoose.connection.close();
     // if (res.statusCode === 200) {
     //   const data = {
     //     members: [
@@ -320,6 +296,68 @@ app
       }
     });
   });
+
+  // app.get('/payment', (req, res)=>{
+  //   res.sendFile(__dirname+'/payment.html')
+  // })
+  
+  const charge = (token, amt)=> {
+    return stripe.charges.create({
+      amount: amt * 100,
+      currency: 'usd',
+      source: token,
+      description: 'Statement Description'
+    })
+  }
+// View Engine Setup 
+app.set('views', __dirname+ '/views') 
+app.set('view engine', 'ejs') 
+
+
+
+app.get('/paymen', function(req, res){ 
+  res.render('Home', { 
+  key: STRIPE_PUBLIC_KEY
+  }) 
+}) 
+
+  // app.get('/paymen', async (req, res) =>{
+  //   res.sendFile(__dirname+"/payment.html")
+  //   // try{
+  //   //   let data = await charge(stripe.createToken({name:"john"}), 50);
+  //   //   console.log(data);
+  //   //   res.sendFile(__dirname+'/accepted.html')
+  //   // }catch(e){
+  //   //   res.send('error' + e);
+  //   // }
+  // });
+
+
+  app.post('/payment', (req, res) =>{
+    stripe.customers.create({
+      email: req.body.stripeEmail,
+      source: req.body.stripeToken
+    })
+      .then(customer => {
+        console.log(customer.id)
+        return stripe.charges.create({
+          amount: 3000,
+          description: 'Cleaning Service',
+          currency: 'USD',
+          customer: customer.id
+        })
+      })
+      .then((charge)=>{
+        res.send('Payment Succeed!\n' + charge)
+      })
+      .catch(error => {
+        res.send('Payment Failed!\n' + error)
+        console.error(error);
+      });
+  });
+
+
+
 
 let port = process.env.PORT;
 if (port == null || port == "") {
