@@ -13,7 +13,8 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:1337/auth/google/callback",
+      // callbackURL: "http://localhost:1337/auth/google/callback",
+      callbackURL: "https://iservicesupercool.herokuapp.com/auth/google/callback",
       // passReqToCallback   : true
     },
     function (accessToken, refreshToken, profile, cb) {
