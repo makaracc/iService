@@ -164,35 +164,7 @@ app.post("/signup", async (req, res) => {
         }
       }
     );
-    // if (res.statusCode === 200) {
-    //   const data = {
-    //     members: [
-    //       {
-    //         email_address: email_adr,
 
-    //         status: "subscribed",
-    //         merge_fields: {
-    //           FNAME: firstName,
-    //           LNAME: lastName,
-    //         },
-    //       },
-    //     ],
-    //   };
-    //   jsonData = JSON.stringify(data);
-
-    //   // const request = https.request(url, options, (res) => {
-    //   //   res.on("data", (data) => {
-    //   //     "Succeed!"
-    //   //   });
-    //   // });
-
-    //   // request.write(jsonData);
-    //   // request.end();
-
-    //   res.sendFile(__dirname + "/success.html");
-    // } else {
-    //   res.sendFile(__dirname + "/404.html");
-    // }
   } else {
     console.log("Comfirm password confirm does not match!");
   }
