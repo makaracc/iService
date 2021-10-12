@@ -16,11 +16,16 @@ const STRIPE_PUBLIC_KEY =
 const STRIPE_SECRET_KEY =
   "sk_test_51Jc6cbHXKOWLYjLRftQUnWaxy0AKbiLaNTFZ3hjXjeyxpXpw1zWLuhaZUl9cxzm80EQpnAL5CYrVPzo9dEJWeipn00389UVHQ2";
 const stripe = require("stripe")(STRIPE_SECRET_KEY);
+const Task = require('./models/Task');
+const Expert = require('./models/Expert')
+const cors = require('cors')
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 app.set("trust proxy", 1);
+app.use(cors());
+app.use(bodyParser.json())
 app.use(
   expreSession({
     cookie: {
@@ -296,6 +301,104 @@ app.post("/payment", (req, res) => {
       console.error(error);
     });
 });
+
+app
+  .route("/experts")
+  // POST request
+  .post((req, res) => {
+    const expert = new Expert({
+      name: req.body.name,
+      phone: req.body.phone,
+      password: req.body.password,
+      address: req.body.address,
+    });
+    expert.save((err) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send("Successfully added a new expert!");
+      }
+    });
+  })
+  // GET All Experts
+  .get((req, res) => {
+    Expert.find((err, experts) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(experts);
+      }
+    });
+  })
+  // Delete
+  .delete((req, res) => {
+    Expert.deleteMany((err) => {
+      if (err) {
+        res.send.apply(err);
+      } else {
+        res.send("Successfully deleted all experts");
+      }
+    });
+  });
+
+
+  // Tasks
+// app
+//   .route("/tasks/:_id")
+//   .get((req, res) => {
+//     // console.log(req.params._id)
+
+//     Task.findOne({ _id: req.params._id }, (err, foundTask) => {
+//       if (!err) {
+//         res.send(foundTask);
+//       } else {
+//         res.send("No match task found!");
+//       }
+//     });
+//   })
+  
+
+  app
+  .route("/tasks")
+  .post((req, res) => {
+    const task = new Task({
+      title: req.body.title,
+      type: req.body.type,
+      description: req.body.description,
+      suburb: req.body.suburb,
+      date: req.body.date,
+      estimated_price: req.body.price
+    });
+    task.save((err) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(`Successfully added a new Task!\n ${task}`);
+      }
+    });
+  })
+  // GET All Task
+  .get((req, res) => {
+    Task.find((err, tasks) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(`${tasks}`);
+      }
+    });
+  })
+  // Delete
+  .delete((req, res) => {
+    Task.deleteMany((err) => {
+      if (err) {
+        res.send.apply(err);
+      } else {
+        res.send("Successfully deleted all tasks");
+      }
+    });
+  });
+
+
 
 
 
