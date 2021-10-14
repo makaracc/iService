@@ -1,9 +1,22 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const clientSchema = new mongoose.Schema({
+const passportLocalMongoose = require("passport-local-mongoose")
+const findOrCreate = require("mongoose-findorcreate");
+const iserviceUserSchema = new mongoose.Schema({
+  googleId: String,
   first_name: String,
   last_name: String,
   email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is not valid!");
+      }
+    }
+  },
+  username: {
     type: String,
     trim: true,
     lowercase: true,
@@ -19,4 +32,8 @@ const clientSchema = new mongoose.Schema({
   zip: Number,
   phone: Number
 });
-module.exports = mongoose.model("iservicedb", clientSchema);
+
+iserviceUserSchema.plugin(passportLocalMongoose)
+iserviceUserSchema.plugin(findOrCreate);
+
+module.exports = mongoose.model("iservicedb", iserviceUserSchema);

@@ -1,72 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
-
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <title>iService</title>
-  </head>
-  <body style="margin: 50px;">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     
-    
-    <h2>Customer Registration</h2>
-    <h4>Crate an iService Account</h4>
-
-    <form action="/" method="post">
-            <label for="country">Country of residence*</label><br>
-            <select id="country" name="country" placeholder="Choose from list" required="required">
-                <option value="" disabled selected hidden>Choose from list</option>
-                <option value="America">Americe</option>
-                <option value="Australia">Australia</option>
-                <option value="Canada">Canada</option>
-                <option value="England">England</option>
-                <option value="New Zealand">New Zealand</option>
-              </select><br>
-            <table>
-                <tr>
-                    <td><label for="fname">First name*</label><br></td>
-                    <td><label for="lname">Last name*</label><br> </td>
-                </tr>
-                <tr>
-                    <td><input type="text" id="fname" name="first_name" required="required"></td>
-                    <td><input type="text" id="lname" name="last_name" required="required"></td>
-                </tr>
-            </table>
-            <label for="email">Email*</label><br>
-            <input type="email" id="email" name="email" required="required" size="42"><br>
-            <label for="password">Password*</label><br>
-            <input type="password" id="password" name="password" required="required" size="42"><br>
-            <label for="cpassword">Confirm Password*</label><br>
-            <input type="password" id="cpassword" name="confirm_password" required="required" size="42"><br>
-
-            <label for="address">Address*</label><br>
-            <input type="text" id="address" name="address" required="required" size="42"><br><br>
-            <input type="text" id="address2" name="address2" size="42"><br>
-            <table>
-                <tr>
-                    <td><label for="city">City*</label><br></td>
-                    <td><label for="state">State, Province or Region*</label><br> </td>
-                </tr><br>
-                <td><input type="text" id="city" name="city" required="required" ></td>
-                    <td><input type="text" id="state" name="state" required="required"></td>
-                    
-            </table>
-
-            
-            <label for="zip">ZIP / Postal code</label><br>
-            <input type="text" id="zip" name="zip" size="42"><br>
-            <label for="phone">Mobile Phone number</label><br>
-            <input type="text" id="phone" name="phone" size="42"><br><br>
-            
-            <button class="btn-abit-blue" type="submit">Create Account</button>
-          </form>
-    </form>
-
-  </body>
+    <title>Home</title>
+</head>
+<body>
+    <h1>Login succeed!</h1>
+    <hr>
+   <div style="text-align: center;">
+    <h3>Pay for service at IService</h3> 
+    <h3>Payment method: Stipe</h3> 
+    <h4>Cost: $50</h4>
+    <form action="/payment" method="POST"> 
+    <script
+        src="//checkout.stripe.com/v3/checkout.js"
+        class="stripe-button btn-block"
+        data-key="pk_test_51Jc6cbHXKOWLYjLRzBavS4GeihsDxkPgcAMoIpyNu0AH1SqLCMDYhgLk0VWCFb8TSxOqwdnUFlo09ea4VmPrZXOY00bLJWCAyT" 
+        data-amount="5000" 
+        data-currency="aud" 
+        data-name="IService" 
+        data-description="Cleaning" 
+        data-locale="auto" >
+        </script> 
+   </div>
+   </form>
+    <hr>
+    <form action="/logout" method="GET">
+    <button class="btn-danger" type="submit">Logout</button></form>
+</body>
 </html>
