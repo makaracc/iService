@@ -6,7 +6,8 @@ const Task = new mongoose.Schema({
   description: String,
   suburb: String,
   date: String,
-  estimated_price: String
+  estimated_price: String,
+  image: String
   
 });
 

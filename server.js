@@ -21,11 +21,13 @@ const Expert = require('./models/Expert')
 const cors = require('cors')
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(__dirname + "/public"));
 app.set("trust proxy", 1);
 app.use(cors());
-app.use(bodyParser.json())
+// app.use(bodyParser.json())
+app.use(bodyParser.json({limit: '50mb', extended: true}))
 app.use(
   expreSession({
     cookie: {
@@ -343,31 +345,73 @@ app
 
 
   // Tasks
-// app
-//   .route("/tasks/:_id")
-//   .get((req, res) => {
-//     // console.log(req.params._id)
+app
+  .route("/tasks/title/:title")
+  .get((req, res) => {
+    // console.log(req.params._id)
 
-//     Task.findOne({ _id: req.params._id }, (err, foundTask) => {
-//       if (!err) {
-//         res.send(foundTask);
-//       } else {
-//         res.send("No match task found!");
-//       }
-//     });
-//   })
+    Task.find({ title: { $regex: '.*' + req.params.title  + '.*', $options: 'i' }}, (err, foundTask) => {
+      if (!err) {
+        res.json(foundTask);
+      } else {
+        res.json("No match task found!");
+      }
+    });
+  })
+app
+  .route("/tasks/suburb/:suburb")
+  .get((req, res) => {
+    // console.log(req.params._id)
+
+    Task.find({ suburb: { $regex: '.*' + req.params.suburb  + '.*', $options: 'i'} }, (err, foundTask) => {
+      if (!err) {
+        res.json(foundTask);
+      } else {
+        res.json("No match task found!");
+      }
+    });
+  })
+app
+  .route("/tasks/date/:date")
+  .get((req, res) => {
+    // console.log(req.params._id)
+
+    Task.findOne({ date: { $regex: '.*' + req.params.date  + '.*', $options: 'i' }}, (err, foundTask) => {
+      if (!err) {
+        res.json(foundTask);
+      } else {
+        res.json("No match task found!");
+      }
+    });
+  })
+
+  app.route("/tasks/id/:_id")
+    // Delete
+    .delete((req, res) => {
+      Task.deleteOne({ _id: req.params._id }, (err) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.send(`Successfully deleted task of id: ${req.params._id}`);
+        }
+      });
+    });
   
 
   app
   .route("/tasks")
   .post((req, res) => {
+    // const base64image = req.body.img;
+    // const bufferImg = new Buffer(base64image, 'base64');
     const task = new Task({
       title: req.body.title,
       type: req.body.type,
       description: req.body.description,
       suburb: req.body.suburb,
       date: req.body.date,
-      estimated_price: req.body.price
+      estimated_price: req.body.price,
+      // image: bufferImg
+      image: req.body.img
     });
     task.save((err) => {
       if (err) {
@@ -383,20 +427,13 @@ app
       if (err) {
         res.send(err);
       } else {
-        res.json(`${tasks}`);
+        res.json (tasks);
       }
     });
   })
-  // Delete
-  .delete((req, res) => {
-    Task.deleteMany((err) => {
-      if (err) {
-        res.send.apply(err);
-      } else {
-        res.send("Successfully deleted all tasks");
-      }
-    });
-  });
+
+
+  
 
 
 
